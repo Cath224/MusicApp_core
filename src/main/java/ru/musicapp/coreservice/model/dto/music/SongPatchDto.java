@@ -14,7 +14,7 @@ public class SongPatchDto {
 
     private String title;
 
-    private Integer duration;
+    private Integer sequenceNumber;
 
     private String lyrics;
 

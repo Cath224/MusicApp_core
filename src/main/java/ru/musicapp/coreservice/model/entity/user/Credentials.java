@@ -28,12 +28,6 @@ public class Credentials {
 
     private String password;
 
-    @Column(name = "salt_id")
-    private UUID saltId;
-
-    @OneToOne
-    @JoinColumn(name = "salt_id", insertable = false, updatable = false)
-    private Salt salt;
 
     @CreationTimestamp(source = SourceType.DB)
     private OffsetDateTime createdTimestamp;

@@ -20,7 +20,7 @@ public class SongShortDto {
 
     private UUID albumId;
 
-    private Integer duration;
+    private Double duration;
 
     private UUID fileId;
 

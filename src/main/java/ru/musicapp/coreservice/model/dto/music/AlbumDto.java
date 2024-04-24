@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.OffsetDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -29,6 +30,7 @@ public class AlbumDto {
 
     private String shortDescription;
 
+    private Set<String> genres;
 
     private OffsetDateTime createdTimestamp;
 

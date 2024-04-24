@@ -8,6 +8,9 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ru.musicapp.coreservice.model.entity.user.User;
 
 import java.time.OffsetDateTime;
@@ -21,6 +24,7 @@ import java.util.UUID;
 @Builder
 @Table(name = "musician", schema = "core_service")
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Musician {
 
     @Id
@@ -48,9 +52,11 @@ public class Musician {
     private OffsetDateTime updatedTimestamp;
 
     @Column(name = "created_by")
+    @CreatedBy
     private UUID createdBy;
 
     @Column(name = "updated_by")
+    @LastModifiedBy
     private UUID updatedBy;
 
     @ManyToOne(fetch = FetchType.LAZY)

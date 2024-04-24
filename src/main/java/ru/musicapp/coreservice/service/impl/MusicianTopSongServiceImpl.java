@@ -22,7 +22,7 @@ public class MusicianTopSongServiceImpl implements MusicianTopSongService {
     @Transactional(readOnly = true)
     @Override
     public List<SongShortDto> get(UUID musicianId) {
-       Set<UUID> songs = songRepository.findTopIds5ByMusicianId(musicianId);
-       return songShortMapper.toDtos(songRepository.findAllById(songs));
+        Set<UUID> songs = songRepository.findTopIds5ByMusicianId(musicianId);
+        return songShortMapper.toDtos(songRepository.findAllById(songs));
     }
 }

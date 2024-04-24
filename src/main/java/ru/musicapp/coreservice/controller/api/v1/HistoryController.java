@@ -15,12 +15,6 @@ public class HistoryController {
 
     private final HistoryService service;
 
-
-    @PostMapping
-    public void addToHistory(@RequestParam UUID songId) {
-        service.save(songId);
-    }
-
     @GetMapping
     public PageResponse<HistoryDto> get(@RequestParam(required = false, defaultValue = "0") Integer offset,
                                         @RequestParam(required = false, defaultValue = "1000") Integer limit) {

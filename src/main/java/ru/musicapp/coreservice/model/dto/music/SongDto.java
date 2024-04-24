@@ -21,15 +21,15 @@ public class SongDto {
 
     private UUID albumId;
 
-    private Integer duration;
+    private Integer sequenceNumber;
+
+    private Double duration;
 
     private UUID fileId;
 
     private String lyrics;
 
-
     private OffsetDateTime createdTimestamp;
-
 
     private OffsetDateTime updatedTimestamp;
 

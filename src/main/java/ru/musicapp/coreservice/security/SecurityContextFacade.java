@@ -1,13 +1,15 @@
 package ru.musicapp.coreservice.security;
 
-import ru.musicapp.coreservice.model.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
+import ru.musicapp.coreservice.model.UserExtendedDetails;
+
+import java.util.UUID;
 
 public class SecurityContextFacade {
 
 
-    public static UserDetails get() {
-        //(UserDetails) SecurityContextHolder.getContext().getAuthentication().getCredentials();
-        return new UserDetails();
+    public static UserExtendedDetails get() {
+        return (UserExtendedDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
 }

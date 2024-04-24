@@ -7,7 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.musicapp.coreservice.mapper.LikeMapper;
-import ru.musicapp.coreservice.model.UserDetails;
+import ru.musicapp.coreservice.model.UserExtendedDetails;
 import ru.musicapp.coreservice.model.dto.playlist.LikeCreateDto;
 import ru.musicapp.coreservice.model.dto.playlist.LikeDto;
 import ru.musicapp.coreservice.model.entity.playlist.Like;
@@ -26,17 +26,21 @@ public class LikeServiceImpl implements LikeService {
 
     @Transactional
     @Override
-    public void create(LikeCreateDto dto) {
-        Like like = mapper.fromCreateDto(dto);
-        UserDetails details = SecurityContextFacade.get();
-        like.getId().setUserId(details.getId());
+    public void create(UUID songId) {
+        UserExtendedDetails details = SecurityContextFacade.get();
+        Like like = Like.builder()
+                .id(Like.LikeId.builder()
+                        .songId(songId)
+                        .userId(details.getId())
+                        .build())
+                .build();
         repository.save(like);
     }
 
     @Transactional(readOnly = true)
     @Override
     public Page<LikeDto> get(Integer offset, Integer limit) {
-        UserDetails details = SecurityContextFacade.get();
+        UserExtendedDetails details = SecurityContextFacade.get();
         Page<Like> page = repository.findAllByUserId(details.getId(), PageRequest.of(offset / limit, limit));
         return new PageImpl<>(
                 mapper.toDtos(page.getContent()),
@@ -45,10 +49,21 @@ public class LikeServiceImpl implements LikeService {
         );
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public LikeDto getBySongId(UUID songId) {
+        UserExtendedDetails details = SecurityContextFacade.get();
+        return mapper.toDto(repository.findById(Like.LikeId.builder()
+                        .userId(details.getId())
+                        .songId(songId)
+                        .build())
+                .orElse(null));
+    }
+
     @Transactional
     @Override
     public void delete(UUID songId) {
-        UserDetails details = SecurityContextFacade.get();
+        UserExtendedDetails details = SecurityContextFacade.get();
         repository.deleteById(Like.LikeId.builder()
                 .songId(songId)
                 .userId(details.getId())

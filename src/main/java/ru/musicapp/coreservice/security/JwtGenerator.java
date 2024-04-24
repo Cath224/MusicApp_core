@@ -64,11 +64,11 @@ public class JwtGenerator {
 
     public boolean isTokenValid(String token, UserExtendedDetails userDetails) {
         try {
-        Jws<Claims> claims = Jwts.parser().decryptWith(Keys.hmacShaKeyFor(signKey.getBytes(StandardCharsets.UTF_8)))
-                .decryptWith(Keys.hmacShaKeyFor(signKey.getBytes(StandardCharsets.UTF_8)))
-                .verifyWith(Keys.hmacShaKeyFor(signKey.getBytes(StandardCharsets.UTF_8)))
-                .build()
-                .parseSignedClaims(token);
+            Jws<Claims> claims = Jwts.parser().decryptWith(Keys.hmacShaKeyFor(signKey.getBytes(StandardCharsets.UTF_8)))
+                    .decryptWith(Keys.hmacShaKeyFor(signKey.getBytes(StandardCharsets.UTF_8)))
+                    .verifyWith(Keys.hmacShaKeyFor(signKey.getBytes(StandardCharsets.UTF_8)))
+                    .build()
+                    .parseSignedClaims(token);
 
             if (claims.getPayload().getExpiration() == null
                     || claims.getPayload().getExpiration().before(new Date())

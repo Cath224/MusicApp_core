@@ -18,7 +18,7 @@ public class SongCreateDto {
 
     private UUID albumId;
 
-    private Integer duration;
+    private Integer sequenceNumber;
 
     private String lyrics;
 

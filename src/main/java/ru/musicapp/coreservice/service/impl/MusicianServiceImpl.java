@@ -2,6 +2,7 @@ package ru.musicapp.coreservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.musicapp.coreservice.mapper.CrudEntityMapper;
 import ru.musicapp.coreservice.mapper.MusicianMapper;
 import ru.musicapp.coreservice.model.dto.music.MusicianCreateDto;
@@ -12,6 +13,7 @@ import ru.musicapp.coreservice.repository.EntityRepository;
 import ru.musicapp.coreservice.repository.MusicianRepository;
 import ru.musicapp.coreservice.service.MusicianService;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -29,5 +31,11 @@ public class MusicianServiceImpl extends CrudEntityServiceImpl<Musician, Musicia
     @Override
     protected CrudEntityMapper<Musician, MusicianDto, MusicianCreateDto, MusicianPatchDto> getMapper() {
         return mapper;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<MusicianDto> findSimilarMusicians(UUID musicianId) {
+        return mapper.toDtos(repository.findAllSimilarById(musicianId));
     }
 }

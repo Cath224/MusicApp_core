@@ -5,6 +5,10 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import ru.musicapp.coreservice.model.entity.user.User;
 
 import java.time.OffsetDateTime;
@@ -17,6 +21,7 @@ import java.util.UUID;
 @Builder
 @Table(name = "file", schema = "core_service")
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class File {
 
     @Id
@@ -35,9 +40,11 @@ public class File {
     private OffsetDateTime updatedTimestamp;
 
     @Column(name = "created_by")
+    @CreatedBy
     private UUID createdBy;
 
     @Column(name = "updated_by")
+    @LastModifiedBy
     private UUID updatedBy;
 
     @ManyToOne(fetch = FetchType.LAZY)

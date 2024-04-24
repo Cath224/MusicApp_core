@@ -17,13 +17,13 @@ public class LikeController {
     private final LikeService service;
 
 
-    @PostMapping
-    public void create(@RequestBody LikeCreateDto dto) {
-        service.create(dto);
+    @PostMapping("{songId}")
+    public void create(@PathVariable UUID songId) {
+        service.create(songId);
     }
 
-    @DeleteMapping
-    public void delete(@RequestParam UUID songId) {
+    @DeleteMapping("{songId}")
+    public void delete(@PathVariable UUID songId) {
         service.delete(songId);
     }
 
@@ -31,5 +31,10 @@ public class LikeController {
     public PageResponse<LikeDto> get(@RequestParam(required = false, defaultValue = "0") Integer offset,
                                      @RequestParam(required = false, defaultValue = "1000") Integer limit) {
         return PageResponse.of(service.get(offset, limit));
+    }
+
+    @GetMapping("by-song-id/{songId}")
+    public LikeDto getBySongId(@PathVariable UUID songId) {
+        return service.getBySongId(songId);
     }
 }

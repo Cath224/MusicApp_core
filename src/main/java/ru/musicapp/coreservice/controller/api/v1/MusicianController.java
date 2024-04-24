@@ -31,6 +31,11 @@ public class MusicianController extends CrudController<MusicianCreateDto, Musici
         return musicianTopSongService.get(id);
     }
 
+    @GetMapping("{id}/similar")
+    public List<MusicianDto> getSimilar(@PathVariable UUID id) {
+        return musicianService.findSimilarMusicians(id);
+    }
+
     @Override
     protected CrudEntityService<MusicianDto, MusicianCreateDto, MusicianPatchDto, UUID> getEntityService() {
         return musicianService;

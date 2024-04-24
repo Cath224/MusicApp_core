@@ -7,7 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.musicapp.coreservice.mapper.HistoryMapper;
-import ru.musicapp.coreservice.model.UserDetails;
+import ru.musicapp.coreservice.model.UserExtendedDetails;
 import ru.musicapp.coreservice.model.dto.playlist.HistoryDto;
 import ru.musicapp.coreservice.model.entity.playlist.History;
 import ru.musicapp.coreservice.repository.HistoryRepository;
@@ -26,7 +26,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Transactional
     @Override
     public void save(UUID songId) {
-        UserDetails details = SecurityContextFacade.get();
+        UserExtendedDetails details = SecurityContextFacade.get();
         repository.save(History.builder()
                 .id(History.HistoryId.builder()
                         .userId(details.getId())
@@ -38,7 +38,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Transactional(readOnly = true)
     @Override
     public Page<HistoryDto> get(Integer offset, Integer limit) {
-        UserDetails details = SecurityContextFacade.get();
+        UserExtendedDetails details = SecurityContextFacade.get();
         Page<History> page = repository.findAllByUserId(details.getId(), PageRequest.of(offset / limit, limit));
         return new PageImpl<>(
                 mapper.toDtos(page.getContent()),
@@ -50,7 +50,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Transactional
     @Override
     public void deleteBySongId(UUID songId) {
-        UserDetails details = SecurityContextFacade.get();
+        UserExtendedDetails details = SecurityContextFacade.get();
         repository.deleteById(History.HistoryId.builder()
                 .songId(songId)
                 .userId(details.getId())
@@ -60,7 +60,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Transactional
     @Override
     public void clearAll() {
-        UserDetails details = SecurityContextFacade.get();
+        UserExtendedDetails details = SecurityContextFacade.get();
         repository.deleteAllByUserId(details.getId());
     }
 }
