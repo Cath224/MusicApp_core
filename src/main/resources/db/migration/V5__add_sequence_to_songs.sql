@@ -1,0 +1,1 @@
+alter table core_service.song add column if not exists sequence_number int4 not null default 0;
