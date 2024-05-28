@@ -1,0 +1,1 @@
+alter table core_service.song alter column duration type float8;

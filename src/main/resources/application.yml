@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: core-service
+  flyway:
+    enabled: true
+    schemas: core_service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/music_app_db
+    username: postgres
+    password: passw0rd
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 1000
+        show_sql: true
+        format_sql: true
+  servlet:
+    multipart:
+      max-file-size: 10GB
+      max-request-size: 10GB
+      enabled: true
+secret: 1a284e0b-2be8-4605-86df-39611aeb68f8
+minio:
+  url: http://localhost:9000
+  access-token: root-user
+  security-token: passw0rd
+  read-timeout: 10000s
+  timeout: 10000s
