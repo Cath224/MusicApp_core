@@ -5,7 +5,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.musicapp.coreservice.model.entity.music.Song;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Repository
 public interface SongRepository extends EntityRepository<Song, UUID> {
@@ -44,4 +47,9 @@ public interface SongRepository extends EntityRepository<Song, UUID> {
     LinkedHashSet<UUID> findAllMusicianIdsBySongIdOrderBySequenceNumber(@Param("songId") UUID songId);
 
 
+    @Query("select s from Song s inner join History h on s.id = h.song.id group by s.id order by count (h.song.id) desc limit 10")
+    List<Song> findAllTop10Songs();
+
+    @Query("select s from Song s order by s.createdTimestamp desc limit 10")
+    List<Song> findAllTop10SongsNewest();
 }

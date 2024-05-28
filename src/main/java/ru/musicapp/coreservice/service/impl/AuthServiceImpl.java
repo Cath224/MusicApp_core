@@ -33,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
 
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 dto.getLogin(),
-               dto.getPassword()
+                dto.getPassword()
         ));
 
         String token = jwtGenerator.generateJwt(userExtendedDetails);

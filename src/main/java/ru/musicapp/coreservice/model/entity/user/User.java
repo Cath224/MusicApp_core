@@ -2,10 +2,11 @@ package ru.musicapp.coreservice.model.entity.user;
 
 
 import jakarta.persistence.*;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.SourceType;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
 import java.time.OffsetDateTime;
@@ -42,6 +43,10 @@ public class User {
 
     @JdbcTypeCode(SqlTypes.ARRAY)
     private List<String> links;
+
+    private boolean blocked = Boolean.FALSE;
+
+    private UUID fileId;
 
     @CreationTimestamp(source = SourceType.DB)
     private OffsetDateTime createdTimestamp;

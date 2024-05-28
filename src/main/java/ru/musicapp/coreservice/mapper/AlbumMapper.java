@@ -7,7 +7,7 @@ import ru.musicapp.coreservice.model.dto.music.AlbumPatchDto;
 import ru.musicapp.coreservice.model.entity.music.Album;
 import ru.musicapp.coreservice.model.entity.music.Genre;
 
-@Mapper(config = EntityMapperConfiguration.class)
+@Mapper(config = EntityMapperConfiguration.class, uses = {MusicianShortMapper.class})
 public interface AlbumMapper extends CrudEntityMapper<Album, AlbumDto, AlbumCreateDto, AlbumPatchDto> {
 
     static String fromGenreToString(Genre genre) {

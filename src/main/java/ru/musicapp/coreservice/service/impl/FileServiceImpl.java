@@ -1,7 +1,6 @@
 package ru.musicapp.coreservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.compress.utils.FileNameUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -16,24 +15,21 @@ import ru.musicapp.coreservice.model.entity.music.Album;
 import ru.musicapp.coreservice.model.entity.music.Musician;
 import ru.musicapp.coreservice.model.entity.music.Song;
 import ru.musicapp.coreservice.model.entity.playlist.Playlist;
+import ru.musicapp.coreservice.model.entity.user.User;
 import ru.musicapp.coreservice.model.type.BucketName;
 import ru.musicapp.coreservice.model.type.PictureType;
 import ru.musicapp.coreservice.repository.*;
 import ru.musicapp.coreservice.service.FileService;
 import ru.musicapp.coreservice.service.MinioAdapterService;
-import ru.musicapp.coreservice.service.MusicianService;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.sound.sampled.spi.AudioFileReader;
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -47,6 +43,7 @@ public class FileServiceImpl extends GetEntityServiceImpl<File, FileDto, UUID> i
     private final MusicianRepository musicianRepository;
     private final PlaylistRepository playlistRepository;
     private final MinioAdapterService minioAdapterService;
+    private final UserRepository userRepository;
 
     @Transactional
     @Override
@@ -85,22 +82,23 @@ public class FileServiceImpl extends GetEntityServiceImpl<File, FileDto, UUID> i
                 Album album = albumRepository.findById(UUID.fromString(id)).orElseThrow(() -> new RuntimeException());
                 album.setFileId(file.getId());
                 albumRepository.save(album);
-                break;
             }
             case PLAYLIST -> {
                 Playlist playlist = playlistRepository.findById(UUID.fromString(id)).orElseThrow(() -> new RuntimeException());
                 playlist.setFileId(file.getId());
                 playlistRepository.save(playlist);
-                break;
             }
             case MUSICIAN -> {
                 Musician musician = musicianRepository.findById(UUID.fromString(id)).orElseThrow(() -> new RuntimeException());
                 musician.setFileId(file.getId());
                 musicianRepository.save(musician);
-                break;
+            }
+            case USER -> {
+                User user = userRepository.findById(UUID.fromString(id)).orElseThrow(() -> new RuntimeException());
+                user.setFileId(file.getId());
+                userRepository.save(user);
             }
             default -> {
-                break;
             }
         }
         try (InputStream is = multipartFile.getInputStream()) {
@@ -118,7 +116,7 @@ public class FileServiceImpl extends GetEntityServiceImpl<File, FileDto, UUID> i
     @Override
     public void uploadSong(MultipartFile multipartFile, UUID songId) {
         String contentType = multipartFile.getContentType();
-        if (!Objects.equals("audio/wave", contentType)) {
+        if (!Objects.equals("audio/wave", contentType) && !Objects.equals("audio/wav", contentType)) {
             throw new RuntimeException();
         }
         Song song = songRepository.findById(songId).orElseThrow(() -> new RuntimeException());

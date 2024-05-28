@@ -25,6 +25,7 @@ import ru.musicapp.coreservice.service.PlayService;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,13 +48,13 @@ public class PlayServiceImpl implements PlayService {
         Song song = songRepository.findById(songId).orElseThrow(() -> new RuntimeException());
         User user = userRepository.findByCredentials_Login(login).orElseThrow(() -> new RuntimeException());
         historyInternalService.saveSongToHistory(songId, user.getId());
-        PlaylistQueueElement playlistQueueElement = redisTemplate.opsForValue().get(user.getId().toString());
+        PlaylistQueueElement playlistQueueElement = redisTemplate.opsForValue().get("playlist_" + user.getId().toString());
         if (playlistQueueElement != null) {
             LinkedHashSet<UUID> ids = playlistQueueElement.getSongIds();
             if (CollectionUtils.isNotEmpty(ids)) {
                 playlistQueueElement.getSongIds().removeFirst();
-                redisTemplate.opsForValue().set(user.getId().toString(), playlistQueueElement);
-                redisTemplate.expire(user.getId().toString(), Duration.ofHours(12));
+                redisTemplate.opsForValue().set("playlist_" + user.getId().toString(), playlistQueueElement);
+                redisTemplate.expire("playlist_" + user.getId().toString(), Duration.ofHours(12));
             }
 
         }
@@ -65,34 +66,59 @@ public class PlayServiceImpl implements PlayService {
     @Override
     public List<SongShortDto> getCurrentQueuePlaylist() {
         UserExtendedDetails details = SecurityContextFacade.get();
-        PlaylistQueueElement playlistQueueElement = redisTemplate.opsForValue().get(details.getId().toString());
+        PlaylistQueueElement playlistQueueElement = redisTemplate.opsForValue().get("playlist_" + details.getId().toString());
         if (playlistQueueElement == null) {
             return Collections.emptyList();
         }
-        return songShortMapper.toDtos(songRepository.findAllById(playlistQueueElement.getSongIds()));
+        List<Song> songs = songRepository.findAllById(playlistQueueElement.getSongIds());
+        Map<UUID, Song> songsByIds = songs.stream()
+                .collect(Collectors.toMap(Song::getId, el -> el));
+
+        return songShortMapper.toDtos(playlistQueueElement.getSongIds().stream().map(songsByIds::get).collect(Collectors.toList()));
     }
 
     @Transactional
     @Override
-    public void generatePlaylistQueue(UUID songId) {
-        LinkedHashSet<UUID> songsIds = songRepository.findAllIdsBySongIdOrderBySequenceNumber(songId);
-        LinkedHashSet<UUID> musicianSongIds = songRepository.findAllMusicianIdsBySongIdOrderBySequenceNumber(songId);
+    public void generatePlaylistQueue(UUID songId, String login) {
+        User user = userRepository.findByCredentials_Login(login).orElseThrow(() -> new RuntimeException());
+        PlaylistQueueElement playlistQueueElement = redisTemplate.opsForValue().get("playlist_" + user.getId().toString());
+        if (playlistQueueElement != null && CollectionUtils.isNotEmpty(playlistQueueElement.getSongIds()) && playlistQueueElement.getSongIds().size() <= 2) {
+            LinkedHashSet<UUID> ids = playlistQueueElement.getSongIds();
+            LinkedHashSet<UUID> songsIds = songRepository.findAllIdsBySongIdOrderBySequenceNumber(songId);
+            LinkedHashSet<UUID> musicianSongIds = songRepository.findAllMusicianIdsBySongIdOrderBySequenceNumber(songId);
 
-        songsIds.addFirst(songId);
-        songsIds.addAll(musicianSongIds);
+            songsIds.addAll(musicianSongIds);
 
-        Set<UUID> similarUserIds = predictionServiceAdapter.generateSimilarUsers(SecurityContextFacade.get().getId());
-        if (!similarUserIds.isEmpty()) {
-            LinkedHashSet<UUID> similarUsersSongsIds = songRepository.findAllFromHistoryLikesByUserIds(similarUserIds);
-            songsIds.addAll(similarUsersSongsIds);
+            Set<UUID> similarUserIds = predictionServiceAdapter.generateSimilarUsers(SecurityContextFacade.get().getId());
+            if (!similarUserIds.isEmpty()) {
+                LinkedHashSet<UUID> similarUsersSongsIds = songRepository.findAllFromHistoryLikesByUserIds(similarUserIds);
+                songsIds.addAll(similarUsersSongsIds);
+            }
+
+            ids.addAll(songsIds);
+        } else if (playlistQueueElement == null || CollectionUtils.isEmpty(playlistQueueElement.getSongIds())) {
+            LinkedHashSet<UUID> songsIds = songRepository.findAllIdsBySongIdOrderBySequenceNumber(songId);
+            LinkedHashSet<UUID> musicianSongIds = songRepository.findAllMusicianIdsBySongIdOrderBySequenceNumber(songId);
+
+            songsIds.addFirst(songId);
+            songsIds.addAll(musicianSongIds);
+
+            Set<UUID> similarUserIds = predictionServiceAdapter.generateSimilarUsers(SecurityContextFacade.get().getId());
+            if (!similarUserIds.isEmpty()) {
+                LinkedHashSet<UUID> similarUsersSongsIds = songRepository.findAllFromHistoryLikesByUserIds(similarUserIds);
+                songsIds.addAll(similarUsersSongsIds);
+            }
+            playlistQueueElement = PlaylistQueueElement.builder()
+                    .songIds(songsIds)
+                    .build();
+        } else {
+            return;
         }
 
 
         UserExtendedDetails details = SecurityContextFacade.get();
-        redisTemplate.opsForValue().set(details.getId().toString(), PlaylistQueueElement.builder()
-                .songIds(songsIds)
-                .build());
-        redisTemplate.expire(details.getId().toString(), Duration.ofHours(12));
+        redisTemplate.opsForValue().set("playlist_" + details.getId().toString(), playlistQueueElement);
+        redisTemplate.expire("playlist_" + details.getId().toString(), Duration.ofHours(12));
     }
 
 }

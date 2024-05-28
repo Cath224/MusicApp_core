@@ -6,10 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.musicapp.coreservice.controller.api.CrudController;
-import ru.musicapp.coreservice.model.dto.music.MusicianCreateDto;
-import ru.musicapp.coreservice.model.dto.music.MusicianDto;
-import ru.musicapp.coreservice.model.dto.music.MusicianPatchDto;
-import ru.musicapp.coreservice.model.dto.music.SongShortDto;
+import ru.musicapp.coreservice.model.dto.music.*;
 import ru.musicapp.coreservice.service.CrudEntityService;
 import ru.musicapp.coreservice.service.MusicianService;
 import ru.musicapp.coreservice.service.MusicianTopSongService;
@@ -34,6 +31,11 @@ public class MusicianController extends CrudController<MusicianCreateDto, Musici
     @GetMapping("{id}/similar")
     public List<MusicianDto> getSimilar(@PathVariable UUID id) {
         return musicianService.findSimilarMusicians(id);
+    }
+
+    @GetMapping("short")
+    public List<MusicianShortDto> getShort() {
+        return musicianService.getShort();
     }
 
     @Override

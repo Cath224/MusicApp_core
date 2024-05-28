@@ -11,7 +11,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 @Table(name = "authority", schema = "core_service")
 @Entity
 public class Authority {

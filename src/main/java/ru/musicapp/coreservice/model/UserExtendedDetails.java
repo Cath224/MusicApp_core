@@ -23,6 +23,7 @@ public class UserExtendedDetails implements UserDetails {
     private UUID id;
     private String login;
     private String password;
+    private boolean blocked;
     private Set<RoleDto> roles;
 
     @Override
@@ -52,7 +53,7 @@ public class UserExtendedDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !blocked;
     }
 
     @Override
@@ -62,6 +63,6 @@ public class UserExtendedDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return !blocked;
     }
 }

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.musicapp.coreservice.mapper.LikeMapper;
 import ru.musicapp.coreservice.model.UserExtendedDetails;
-import ru.musicapp.coreservice.model.dto.playlist.LikeCreateDto;
 import ru.musicapp.coreservice.model.dto.playlist.LikeDto;
 import ru.musicapp.coreservice.model.entity.playlist.Like;
 import ru.musicapp.coreservice.repository.LikeRepository;

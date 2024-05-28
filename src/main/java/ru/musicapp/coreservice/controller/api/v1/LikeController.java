@@ -3,7 +3,6 @@ package ru.musicapp.coreservice.controller.api.v1;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.musicapp.coreservice.model.PageResponse;
-import ru.musicapp.coreservice.model.dto.playlist.LikeCreateDto;
 import ru.musicapp.coreservice.model.dto.playlist.LikeDto;
 import ru.musicapp.coreservice.service.LikeService;
 

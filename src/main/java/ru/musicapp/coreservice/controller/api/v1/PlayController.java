@@ -1,7 +1,6 @@
 package ru.musicapp.coreservice.controller.api.v1;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -38,8 +37,8 @@ public class PlayController {
 
 
     @PostMapping("generate/by-song-id/{songId}")
-    public void generatePlaylistQueue(@PathVariable UUID songId) {
-        service.generatePlaylistQueue(songId);
+    public void generatePlaylistQueue(@PathVariable UUID songId, @RequestParam String login) {
+        service.generatePlaylistQueue(songId, login);
     }
 
     @GetMapping("current-queue")

@@ -8,6 +8,8 @@ public abstract class CrudEntityServiceImpl<E, Dto, CreateDto, PatchDto, Id>
         extends GetEntityServiceImpl<E, Dto, Id>
         implements CrudEntityService<Dto, CreateDto, PatchDto, Id> {
 
+
+
     @Transactional
     @Override
     public Dto create(CreateDto createDto) {

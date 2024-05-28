@@ -1,17 +1,18 @@
 package ru.musicapp.coreservice.service.impl;
 
 import io.github.perplexhub.rsql.RSQLJPASupport;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.transaction.annotation.Transactional;
 import ru.musicapp.coreservice.mapper.EntityMapper;
 import ru.musicapp.coreservice.model.QueryParams;
 import ru.musicapp.coreservice.repository.EntityRepository;
+import ru.musicapp.coreservice.service.ClickHistoryService;
 import ru.musicapp.coreservice.service.GetEntityService;
 
 public abstract class GetEntityServiceImpl<E, Dto, Id>
         implements GetEntityService<Dto, Id> {
-
 
     @Transactional(readOnly = true)
     @Override
@@ -23,6 +24,7 @@ public abstract class GetEntityServiceImpl<E, Dto, Id>
     @Transactional(readOnly = true)
     @Override
     public Page<Dto> get(QueryParams params) {
+
         Page<E> result = getRepository().findAll(RSQLJPASupport.rsql(params.getQuery()), params.getPageRequest());
         return new PageImpl<>(
                 getMapper().toDtos(result.getContent()),

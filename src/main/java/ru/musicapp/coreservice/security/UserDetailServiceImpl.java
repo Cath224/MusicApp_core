@@ -30,6 +30,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 user.getId(),
                 username,
                 user.getCredentials().getPassword(),
+                user.isBlocked(),
                 user.getRoles().stream()
                         .map(roleMapper::toDto)
                         .collect(Collectors.toSet())

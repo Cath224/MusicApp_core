@@ -23,4 +23,6 @@ public class SongController extends CrudController<SongCreateDto, SongPatchDto, 
     protected CrudEntityService<SongDto, SongCreateDto, SongPatchDto, UUID> getEntityService() {
         return service;
     }
+
+
 }
